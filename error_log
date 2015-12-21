@@ -1,0 +1,2 @@
+[21-Dec-2015 12:17:04 UTC] PHP Warning:  mysqli::mysqli(): (HY000/1045): Access denied for user 'pavlovci_nvcms'@'localhost' (using password: YES) in /home/pavlovci/public_html/inventumdigital.com/cms/index.php on line 55
+[21-Dec-2015 12:17:29 UTC] PHP Warning:  mysqli::mysqli(): (HY000/1045): Access denied for user 'pavlovci_nvcms'@'localhost' (using password: YES) in /home/pavlovci/public_html/inventumdigital.com/cms/index.php on line 55

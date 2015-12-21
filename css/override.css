@@ -1,0 +1,10 @@
+foreground{opacity:1;transition:1s opacity ease-in-out;background:radial-gradient(ellipse at center,rgba(0,64,255,0)0%,rgba(0,64,255,0.25)100%);position:fixed;top:-25%;height:150%;width:100%;pointer-events:none;animation:fginit 1s 1;animation-timing-function:ease-in-out;}
+body,html,main#Spreads{font:400 16px/1.5 "Avenir", sans-serif;color:#fff;min-width:320px;background-color: #000}
+input[type="button"]{cursor: pointer;}
+form{box-shadow: 0 0 48px rgba(255,255,255,.25) inset}
+input,textarea{-webkit-appearance: none;background: transparent;border-radius: 2px;border: 1px solid rgba(255,255,255,.25);color: #fff;display: block;font-size: 16px;outline:0;padding: 16px;width: 100%;font:400 16px/1 "Avenir", sans-serif;}
+input:hover,textarea:hover{border: 1px solid rgba(255,255,255,.75)}
+input:active,textarea:active{border: 1px solid}
+form{margin: 16px auto}
+#Spreads>*{max-width: 512px}
+h1,h2,h3,h4,h5,h6{font-family:"Avenir", sans-serif;font-weight:100;text-transform:uppercase;max-width: 512px;letter-spacing: 4px}

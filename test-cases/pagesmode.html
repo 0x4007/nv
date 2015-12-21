@@ -1,0 +1,16 @@
+<p>
+Imported "Pages Mode" successfully.
+</p>
+<script>
+nv.selectors.UI.addEventListener("click",function(e){
+	var t = document.getElementById(e.target.hash.slice(1));
+	nv.spreads.each(function(e){
+		if (e.el.id != t.id) {e.el.style.opacity=0; e.el.style.height=0}
+		else {e.el.style.opacity=1; e.el.style.height="100%"}
+	});
+})
+		</script>
+		<style>
+		#Spreads>*{position:absolute;opacity:0;right:0;left:0;}
+		#UI>* a.Active{border:0;}
+		</style>

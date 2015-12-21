@@ -1,0 +1,13 @@
+#Navigation{-webkit-backdrop-filter:blur(16px);}
+#Navigation::before{content:attr(data-viewing);padding:16px;font-size:16px;display: block;border:1px solid transparent}
+#Navigation:hover::before,#Navigation:active::before{display:none}
+#Navigation:hover>li,#Navigation:active>li{display:inline-block}
+#Navigation:hover{background-color:rgba(0,0,0,.75)}
+#Navigation>li{display:none;text-align:center}
+#Navigation{width:100%;min-height:48px;position:absolute;text-align:center;transition:125ms all ease-in-out;pointer-events:all;background-color:rgba(0,0,0,.125)}
+#UI.Active{opacity:1;transform:translateY(0)}
+#UI>* a:active,#UI>* a.Active{transition:125ms all ease-in-out;color:#bfbfbf;border-bottom:1px solid rgba(255,255,255,.9375)}
+#UI>* a:hover{color:#fff}
+#UI>* a{display:block;padding:16px;border:1px solid transparent}
+#UI>*{color:#bfbfbf;font:400 16px/1 "Avenir", sans-serif;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;list-style:none;cursor:pointer;padding:0}
+#UI{position:fixed;width:100%;height:100%;top:0;pointer-events:none;opacity:0;transform:translateY(-48px);transition:.125s all cubic-bezier(0,1,1,1);z-index:2147483646}
