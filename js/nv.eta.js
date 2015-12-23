@@ -1,7 +1,6 @@
 function nv(settings, callback) { // NVETA.
 	"use strict";
 	var subroutine = [
-
 		function SRT0(settings, callback) { // "nv initialization."
 			if (settings && typeof settings != "object") settings = !1, console.error("Settings is to be an object.");
 			if (callback && typeof callback != "function") callback = !1, console.error("Callback is to be a function.");
@@ -13,7 +12,7 @@ function nv(settings, callback) { // NVETA.
 					},
 					events: {},
 					functions: {
-						scanUI: function (node, func) {
+						scanUI: function(node, func) {
 							func(node);
 							node = node.firstChild;
 							while (node) {
@@ -21,11 +20,11 @@ function nv(settings, callback) { // NVETA.
 								node = node.nextSibling;
 							}
 						},
-						buildUI: function () {
+						buildUI: function() {
 							var docFrag = document.createDocumentFragment(),
 								srcLI = document.createElement('LI'),
 								srcA = document.createElement("A");
-							nv.spreads.each(function (spread) {
+							nv.spreads.each(function(spread) {
 								var el = spread.el,
 									id = el.id,
 									li = srcLI.cloneNode(!1),
@@ -40,51 +39,50 @@ function nv(settings, callback) { // NVETA.
 							nv.selectors.Navigation.appendChild(docFrag);
 							return nv;
 						},
-						get: function (target, onsuccess, data, onfail) {
-							var elementToCreate = function (URL) {
+						get: function(target, onsuccess, data, onfail) {
+							var elementToCreate = function(URL) {
 								if (URL.indexOf(".js") != -1) return "SCRIPT"
 								if (URL.indexOf(".css") != -1) return "STYLE"
 								return !1
 							};
 							if (onsuccess == undefined) { // Assumes .JS or .CSS target.
 								if (typeof target == "string") {
-									onsuccess = function (xhr) {
+									onsuccess = function(xhr) {
 										var s = document.createElement(elementToCreate(target));
 										s.textContent = xhr.responseText;
 										document.body.appendChild(s);
 									};
-									onfail = function () {};
+									onfail = function() {};
 								}
 							}
 							if (onfail == undefined) onfail = onsuccess;
 							if (Array.isArray(target)) {
 								var Q = target.reverse(),
 									x = Q.length;
-									while (x--) { // CSS / JS handler is redundant.
-										if (Q[x].indexOf(".js") != -1) {
-											onsuccess = function (xhr) {
-												var s = document.createElement("SCRIPT");
-												s.textContent = xhr.responseText;
-												document.body.appendChild(s);
-											};
-											onfail = function () {}
-										} else if (Q[x].indexOf(".css") != -1) {
-											onsuccess = function (xhr) {
-												var s = document.createElement("STYLE");
-												s.textContent = xhr.responseText;
-												document.body.appendChild(s);
-											};
-											onfail = function () {}
-										}
-										nv.functions.get(Q[x], onsuccess, data, onfail)
+								while (x--) { // CSS / JS handler is redundant.
+									if (Q[x].indexOf(".js") != -1) {
+										onsuccess = function(xhr) {
+											var s = document.createElement("SCRIPT");
+											s.textContent = xhr.responseText;
+											document.body.appendChild(s);
+										};
+										onfail = function() {}
+									} else if (Q[x].indexOf(".css") != -1) {
+										onsuccess = function(xhr) {
+											var s = document.createElement("STYLE");
+											s.textContent = xhr.responseText;
+											document.body.appendChild(s);
+										};
+										onfail = function() {}
+									}
+									nv.functions.get(Q[x], onsuccess, data, onfail)
 								}
 								return !0
 							}
-
 							var xhr = new XMLHttpRequest();
 							xhr.data = data;
 							xhr.open("GET", target);
-							xhr.onloadend = function () {
+							xhr.onloadend = function() {
 								xhr.status == 200 ? onsuccess(xhr) : onfail(xhr);
 							};
 							xhr.send();
@@ -235,7 +233,6 @@ function nv(settings, callback) { // NVETA.
 		},
 		function SRT3() { // "Spread construction."
 			if (nv.selectors.Spreads) {
-
 				var Spreads = function Spreads(DOMSpreads, injectURLs) { // Spread constructor and adds each to controller. Also marks which spreads will be AJAX filled later in the program.
 					this.models = []; // Spreads completed prototype looks like: ".models", ".injected", ".active", ".scripts".
 					if (injectURLs) {
@@ -272,7 +269,7 @@ function nv(settings, callback) { // NVETA.
 					return this;
 				};
 				Spreads.prototype = {
-					register: function (DOMSpreads) {
+					register: function(DOMSpreads) {
 						var spreads = this.models,
 							i = 0,
 							len = DOMSpreads.length;
@@ -280,30 +277,30 @@ function nv(settings, callback) { // NVETA.
 						while (len > i) spreads.push(new Spread(DOMSpreads[--len]))
 						return this;
 					},
-					each: function (fn) {
+					each: function(fn) {
 						var spreads = this,
 							spreadArr = spreads.models,
 							x = spreadArr.length;
 						while (x--) fn(spreadArr[x])
 						return spreads;
 					},
-					wrapAll: function () {
-						this.each(function (spread) {
+					wrapAll: function() {
+						this.each(function(spread) {
 							spread.wrap()
 						});
 						return this
 					},
-					hero: function () {
+					hero: function() {
 						return this.models[this.models.length - 1]
 					},
-					measure: function () {
+					measure: function() {
 						var spreads = this;
-						spreads.each(function (spread) {
+						spreads.each(function(spread) {
 							var spreadTop = spread.el.getBoundingClientRect().top;
 							if (spreadTop < window.innerHeight / 2) spreads.active = spread
-							// if (spreadTop < 16 && spreadTop > -16) window.location.hash = "#".concat(spread.el.id)
+								// if (spreadTop < 16 && spreadTop > -16) window.location.hash = "#".concat(spread.el.id)
 						});
-						spreads.each(function (spread) {
+						spreads.each(function(spread) {
 							if (spread == spreads.active) spread.addClass("Active")
 							else spread.removeClass("Active")
 						});
@@ -315,7 +312,7 @@ function nv(settings, callback) { // NVETA.
 					return this;
 				};
 				Spread.prototype = {
-					wrap: function () { // Constructs vertical-align: middle Spread by placing all content inside of a cell, as well as removing white-space in HTML (inline-block bug fix).
+					wrap: function() { // Constructs vertical-align: middle Spread by placing all content inside of a cell, as well as removing white-space in HTML (inline-block bug fix).
 						var spread = this,
 							el = spread.el,
 							inner = el.innerHTML;
@@ -326,7 +323,7 @@ function nv(settings, callback) { // NVETA.
 						}
 						return spread;
 					},
-					addClass: function (clas) { // Polyfill for classList.add().
+					addClass: function(clas) { // Polyfill for classList.add().
 						var el = this.el,
 							classNames = el.className.split(' ');
 						if (classNames[0] === '') classNames.shift()
@@ -336,7 +333,7 @@ function nv(settings, callback) { // NVETA.
 						}
 						return this;
 					},
-					removeClass: function (clas) { // Polyfill for classList.remove().
+					removeClass: function(clas) { // Polyfill for classList.remove().
 						var el = this.el,
 							classNames = el.className.split(' '),
 							cnIndex = classNames.indexOf(clas);
@@ -359,11 +356,8 @@ function nv(settings, callback) { // NVETA.
 							var scriptParses = spreadData.match(/<script(.|\n)+?<\/script>/ig), // Parses scripts, preserves line breaks.
 								urls = [],
 								codesIndicies = [];
-
-
 							var x = scriptParses.length;
 							while (x--) urls.push(scriptParses[x].match(/src=\".+?\"/ig))
-
 							x = urls.length;
 							while (x--) {
 								if (urls[x]) { // Script has source, collect URL.
@@ -376,19 +370,15 @@ function nv(settings, callback) { // NVETA.
 									}
 								} else codesIndicies.push(x)
 							}
-
 							x = codesIndicies.length;
 							while (x--) { // Non matches for "script src=".
 								spreadData = scriptParses[codesIndicies[x]].replace(/<scrip.+?>/, "");
 								spreadData = spreadData.replace(/<\/scrip.+?>/, "");
 								if (spreadData.length) nv.spreads.scripts.codes.push(spreadData);
 							}
-
 						}
-
 						var spreadData = e.response.replace(/\n\s+|\n/g, ''); // :-( Regex twice to preserve line breaks for code, then remove whitespace for "display:inline-block" bug, and pretty DOM.
 						e.data.innerHTML = ["<article onclick>", spreadData, "</article>"].join("");
-
 						if (Q.length) nv.functions.get((Q[Q.length - 1].getAttribute("data-injected")), cb2, Q.pop())
 						else return subroutine[6]();
 					}, Q.pop())
@@ -397,7 +387,7 @@ function nv(settings, callback) { // NVETA.
 			return subroutine[4]();
 		},
 		function SRT4() { // "Scan UI; build navigation."
-			nv.functions.scanUI(nv.selectors.UI, function (node) { // Registers UI and all child elements thereof to nv.selectors for convenience.
+			nv.functions.scanUI(nv.selectors.UI, function(node) { // Registers UI and all child elements thereof to nv.selectors for convenience.
 				if (node.nodeType == 1) { // Ensures that it will only register nodes with TAGs, unlike text nodes.
 					if (nv.selectors[(node.id || node.className || node.tagName)] == undefined) nv.selectors[(node.id || node.className || node.tagName)] = node // If slot in nv.selectors is empty, register DOM element.
 					else if (nv.selectors[(node.id || node.className || node.tagName)] === node) { // If slot is occupied by the identical node.
@@ -423,14 +413,14 @@ function nv(settings, callback) { // NVETA.
 					//	window.addEventListener("blur", function () {
 					//		nv.spreads.active.removeClass("Active")
 					//	});
-				// window.addEventListener("focus", function () {
-				// 	nv.spreads.active.addClass("Active")
-				// });
-				//	window.addEventListener("beforeunload", function () {
-				//		nv.spreads.active.removeClass("Active")
-				//	});
-				// window.addEventListener("scroll", function () {
-				var framedata = function () {
+					// window.addEventListener("focus", function () {
+					// 	nv.spreads.active.addClass("Active")
+					// });
+					//	window.addEventListener("beforeunload", function () {
+					//		nv.spreads.active.removeClass("Active")
+					//	});
+					// window.addEventListener("scroll", function () {
+				var framedata = function() {
 					nv.spreads.measure();
 					if (nv.selectors.Navigation) {
 						// nv.spreads.hero().el.id == nv.spreads.active.el.id ? UI.className = "" : UI.className = "Active"; // Hide UI on hero.
@@ -443,12 +433,11 @@ function nv(settings, callback) { // NVETA.
 						nv.selectors.Navigation.setAttribute("data-viewing", nv.spreads.active.el.id)
 					}
 					if (nv.selectors.video) nv.spreads.hero() == nv.spreads.active ? nv.selectors.video.play() : nv.selectors.video.pause();
-					window.setTimeout(function () {
+					window.setTimeout(function() {
 						window.requestAnimationFrame(framedata)
 					}, (1000 / 30));
 				};
 				framedata();
-				// });
 			}
 			return !0
 		},
@@ -465,19 +454,18 @@ function nv(settings, callback) { // NVETA.
 				document.body.appendChild(s);
 			}
 			if (nv.spreads.scripts.urls.length) { // Redundant logic.
-				var	x = nv.spreads.scripts.urls.length,
+				var x = nv.spreads.scripts.urls.length,
 					scriptSRC = document.createElement("SCRIPT");
 				while (x--) {
 					var s = scriptSRC.cloneNode(!1);
 					s.src = nv.spreads.scripts.urls[x]
-				document.body.appendChild(s); // Independently appended (no document fragment) to each executes.
+					document.body.appendChild(s); // Independently appended (no document fragment) to each will execute each.
 				}
 			}
-			if (callback) return callback(); // This needs to be in SRT6
+			if (callback) return callback()
 			else return !0
 		}
 	];
-
 	window.nv = nv;
 	return subroutine[0](settings, callback)
 };
