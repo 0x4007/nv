@@ -114,6 +114,7 @@ function nv(settings, callback) { // NVETA.
 				nv.booleans.respawn = !0;
 				nv = window.nv;
 			}
+			if (callback) nv.functions.callback = callback
 			return subroutine[1](settings);
 		},
 		function SRT1(settings) { // "Map settings."
@@ -462,7 +463,7 @@ function nv(settings, callback) { // NVETA.
 					document.body.appendChild(s); // Independently appended (no document fragment) to each will execute each.
 				}
 			}
-			if (callback) return callback()
+			if (nv.functions.callback) return nv.functions.callback()
 			else return !0
 		}
 	];
