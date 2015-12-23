@@ -186,9 +186,9 @@ function nv(settings, callback) { // NVETA.
 						if (xhr.response.toUpperCase().indexOf("<!DOCTYPE HTML") != -1) { // HTML detected, time to scrape anchors.
 							var raw = xhr.response.match(/a href=\".+?\"/ig),
 								options = [];
-							if (raw != null) var x = raw.length;
+							if (raw != null) var x = 0;
 							else console.warn("Failed to scrape hrefs from target document.")
-							while (x--) {
+							while (raw.length - 1 > x++) {
 								if (raw[x].charAt(8) != "?") { // hrefs starting with "?" are only for the Apache directory screen. charAt(8) because 'a href="' is 7 characters long.
 									options.push((raw[x].replace('a href="', '')).slice(0, -1)) // Extracts URL from within 'a href="', '"' wrapper.
 								}
@@ -201,14 +201,14 @@ function nv(settings, callback) { // NVETA.
 								return subroutine[2](nv.spreads.injected.pop()); // Exit
 							}
 						}
-						var x = options.length;
-						options = options.reverse(); // This will ensure that spreads are appended alphabetically.
-						while (x--) {
+						var x = 0;
+						// options = options.reverse(); // This will ensure that spreads are appended alphabetically.
+						while (options.length - 1 > x++) { // This has not been tested with ++ direction.
 							if (Array.isArray(options[x])) {
-								var y = options[x].length, // Array length of multidimensional (internal) array. [ "" , [ "" , ""] , "" ]
+								var y = 0, // Array length of multidimensional (internal) array. [ "" , [ "" , ""] , "" ]
 									z = y; // Offset.
-								while (y--) options.unshift(options[x][y]) // Flatten multidimensional array.
-								options.splice(x += z, 1); // Remove multidimensional array.
+								while (options[x].length - 1 > y++) options.unshift(options[x][y]) // Flatten multidimensional array.
+								options.splice(x -= z, 1); // Remove multidimensional array.
 								/**
 								 * Could use more testing!
 								 */
@@ -219,8 +219,7 @@ function nv(settings, callback) { // NVETA.
 								console.log(["✅ \"", options[x], "\""].join(""))
 							} else console.log(["❌ \"", options[x], "\""].join(""))
 						}
-						subroutine[2](nv.spreads.injected.pop()); // This allows for multiple directory checks. Temporary fix for skipping to next subroutine.
-						// subroutine[3]();
+						subroutine[2](nv.spreads.injected.pop()); // This allows for multiple directory checks.
 					}
 				}, null, function onfail(xhr) {
 					console.error("XHR failure.", xhr);
@@ -260,7 +259,8 @@ function nv(settings, callback) { // NVETA.
 							}
 							tempid = tempid[tempid.length - 1].split(".")[0]; // Remove AJAX target file path, and file extension (typically ".html")
 							section.id = tempid.charAt(0).toUpperCase().concat(tempid.slice(1)); // Capitalize the first character.
-							if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[DOMSpreads.length - 1]); // Place spread in DOM before last spread.
+							// if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[DOMSpreads.length - 1]); // Place spread in DOM before last spread.
+							if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[1]); // Place spread in DOM before second spread.
 							else nv.selectors.Spreads.appendChild(section) // If no existing spread(s), just append this spread as child of #Spreads.
 							this.injected.unshift(section); // Place this spread ("section") into beginning of nv.spreads.injected
 						}
@@ -348,7 +348,7 @@ function nv(settings, callback) { // NVETA.
 				if (nv.spreads.injected != undefined && nv.spreads.injected.length) {
 					var Q = nv.spreads.injected.slice(0),
 						x = nv.spreads.injected.length;
-					nv.functions.get((Q[Q.length - 1].getAttribute("data-injected")), function cb2(e) {
+					nv.functions.get((Q[0].getAttribute("data-injected")), function cb2(e) {
 						console.log("✅", e.data);
 
 						var spreadData = e.response;
@@ -379,9 +379,9 @@ function nv(settings, callback) { // NVETA.
 						}
 						var spreadData = e.response.replace(/\n\s+|\n/g, ''); // :-( Regex twice to preserve line breaks for code, then remove whitespace for "display:inline-block" bug, and pretty DOM.
 						e.data.innerHTML = ["<article onclick>", spreadData, "</article>"].join("");
-						if (Q.length) nv.functions.get((Q[Q.length - 1].getAttribute("data-injected")), cb2, Q.pop())
+						if (Q.length) nv.functions.get((Q[0].getAttribute("data-injected")), cb2, Q.shift())
 						else return subroutine[6]();
-					}, Q.pop())
+					}, Q.shift())
 				}
 			}
 			return subroutine[4]();
