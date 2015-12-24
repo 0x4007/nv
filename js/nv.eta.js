@@ -360,16 +360,17 @@ function nv(settings, callback) { // NVETA.
 							var x = scriptParses.length;
 							while (x--) urls.push(scriptParses[x].match(/src=\".+?\"/ig))
 							x = urls.length;
-							while (x--) {
+							var z = x - 1; // Length offset to prepare for next loop.
+							while (x--) { // urls = [Array[1], null]
 								if (urls[x]) { // Script has source, collect URL.
-									var y = urls.length;
-									while (y--) {
+									var y = urls[x].length;
+									while (y--) { // Remove src=, and all single/double quotes to expose only script URL
 										if (urls[x][y]) {
 											urls[x][y] = urls[x][y].replace("src=", "");
 											nv.spreads.scripts.urls.push(urls[x][y].replace(/['"]+/g, ''))
 										}
 									}
-								} else codesIndicies.push(x)
+								} else codesIndicies.push(z - x) // Reverse index to loop again backwards.
 							}
 							x = codesIndicies.length;
 							while (x--) { // Non matches for "script src=".
@@ -444,15 +445,13 @@ function nv(settings, callback) { // NVETA.
 		},
 		function SRT6(callback) { // Handle scripts within injected spreads. Called synchronously after all spreads are injected.
 			if (nv.spreads.scripts.codes.length) { // Could be optimized? "var x" declaration in IF?
-				var dfg = document.createDocumentFragment(),
-					x = nv.spreads.scripts.codes.length,
+				var x = nv.spreads.scripts.codes.length,
 					scriptSRC = document.createElement("SCRIPT");
 				while (x--) {
 					var s = scriptSRC.cloneNode(!1);
-					s.textContent = nv.spreads.scripts.codes[x]
-					dfg.appendChild(s);
+					s.textContent = nv.spreads.scripts.codes[x];
+					document.body.appendChild(s)
 				}
-				document.body.appendChild(s);
 			}
 			if (nv.spreads.scripts.urls.length) { // Redundant logic.
 				var x = nv.spreads.scripts.urls.length,
