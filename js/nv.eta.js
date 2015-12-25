@@ -444,9 +444,9 @@ function nv(settings, callback) { // NVETA.
 			return !0
 		},
 		function SRT6(callback) { // Handle scripts within injected spreads. Called synchronously after all spreads are injected.
+			var scriptSRC = document.createElement("SCRIPT");
 			if (nv.spreads.scripts.codes.length) { // Could be optimized? "var x" declaration in IF?
-				var x = nv.spreads.scripts.codes.length,
-					scriptSRC = document.createElement("SCRIPT");
+				var x = nv.spreads.scripts.codes.length;
 				while (x--) {
 					var s = scriptSRC.cloneNode(!1);
 					s.textContent = nv.spreads.scripts.codes[x];
@@ -454,18 +454,18 @@ function nv(settings, callback) { // NVETA.
 				}
 			}
 			if (nv.spreads.scripts.urls.length) { // Redundant logic.
-				var x = nv.spreads.scripts.urls.length,
-					scriptSRC = document.createElement("SCRIPT");
+				var x = nv.spreads.scripts.urls.length;
 				while (x--) {
 					var s = scriptSRC.cloneNode(!1);
-					s.src = nv.spreads.scripts.urls[x]
-					document.body.appendChild(s); // Independently appended (no document fragment) to each will execute each.
+					s.src = nv.spreads.scripts.urls[x];
+					document.body.appendChild(s) // Independently appended (no document fragment) to each will execute each.
 				}
 			}
+			window.location = window.location; // Jump to hash href.
 			if (nv.functions.callback) return nv.functions.callback()
 			else return !0
 		}
 	];
 	window.nv = nv;
 	return subroutine[0](settings, callback)
-};
+}
