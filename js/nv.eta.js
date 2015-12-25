@@ -461,7 +461,7 @@ function nv(settings, callback) { // NVETA.
 					document.body.appendChild(s) // Independently appended (no document fragment) to each will execute each.
 				}
 			}
-			window.location = window.location; // Jump to hash href.
+			if (window.location.hash.length) window.location = window.location; // Jump to hash href.
 			if (nv.functions.callback) return nv.functions.callback()
 			else return !0
 		}
