@@ -86,25 +86,25 @@ nv.functions.get(target, onsuccess, data, onfail)
 
 Get is super great because of its flexibility. For the following arguments, here is a description of how it will handle it:
 
-"target"
+`target`
 
 * String -> Assumes URL, fetches and retrieves.
-	-> If contains ".js", will append to DOM on success.
-	-> If contains ".css" will append to DOM on success.
+-* -> If contains ".js", will append to DOM on success.
+-* -> If contains ".css" will append to DOM on success.
 * Array -> Requests each element in order, but will accept them asynchronously. This is important to note if you are loading in JS dependencies. In this case...
 
-"onsuccess"
+`onsuccess`
 
 * Function -> will execute on successful or failed XHR, unless you pass in a function for argument "onfail"!
 
-"data"
+`data`
 
 * Any data type -> May be removed from official documentation (here) in the future. This is to pass in data (such as an object, or string) and have it be accessible from within the XHR and consequently, the callbacks.
 
-"onfail"
+`onfail`
 
 * Function -> to handle when the XHR fails.
 
-Secret "callback"
+Secret: `callback`
 
 * Function -> This really is only here for when you pass in an array of targets, and then an onsuccess function to fire off at the very end of the array. This is here because the function calls itself recursively and moves the "onsuccess" function to "callback", until the array contents are all expired, then it is moved back to "onsuccess"
