@@ -89,8 +89,9 @@ Get is super great because of its flexibility. For the following arguments, here
 `target`
 
 * String -> Assumes URL, fetches and retrieves.
--* -> If contains ".js", will append to DOM on success.
--* -> If contains ".css" will append to DOM on success.
+	* -> If contains ".js", will append to DOM on success.
+	* -> If contains ".css" will append to DOM on success.
+
 * Array -> Requests each element in order, but will accept them asynchronously. This is important to note if you are loading in JS dependencies. In this case...
 
 `onsuccess`
