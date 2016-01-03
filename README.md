@@ -75,3 +75,36 @@ I always include this in the head of my HTML to allow the spreads to be 100% hei
 ```css
 #Spreads>*.Active{opacity:1}#Spreads>*:first-child{height:100%}#Spreads>*>*{text-align:center;display:table-cell;vertical-align:middle}#Spreads>*{display:table;height:100%;width:100%;transition:0.25s all ease-in-out;position:relative;opacity:0.125}#Spreads{height:100%;-webkit-overflow-scrolling:touch;font:400 16px/1.5 sans-serif}*{-webkit-text-size-adjust:none;-webkit-touch-callout:none;margin:0 auto;text-decoration:none;box-sizing:border-box;text-rendering:geometricPrecision}@viewport{width:device-width;zoom:1}a{color:inherit;font:inherit;pointer-events:auto}body,html,main{font:400 16px/1.5 sans-serif;color:#000;height:100%;width:100%;padding:0;margin:0}
 ```
+===
+######JS:
+
+The framework comes with three exposed functions. `"buildUI"`, `"scanUI"`, `"get"`. The first two will be unexposed at a later date, as I just realized that they are not particularly useful for the developer after the framework finishes setting up the navigation bar.
+
+```javascript
+nv.functions.get(target, onsuccess, data, onfail)
+```
+
+Get is super great because of its flexibility. For the following arguments, here is a description of how it will handle it:
+
+"target"
+
+* String -> Assumes URL, fetches and retrieves.
+	-> If contains ".js", will append to DOM on success.
+	-> If contains ".css" will append to DOM on success.
+* Array -> Requests each element in order, but will accept them asynchronously. This is important to note if you are loading in JS dependencies. In this case...
+
+"onsuccess"
+
+* Function -> will execute on successful or failed XHR, unless you pass in a function for argument "onfail"!
+
+"data"
+
+* Any data type -> May be removed from official documentation (here) in the future. This is to pass in data (such as an object, or string) and have it be accessible from within the XHR and consequently, the callbacks.
+
+"onfail"
+
+* Function -> to handle when the XHR fails.
+
+Secret "callback"
+
+* Function -> This really is only here for when you pass in an array of targets, and then an onsuccess function to fire off at the very end of the array. This is here because the function calls itself recursively and moves the "onsuccess" function to "callback", until the array contents are all expired, then it is moved back to "onsuccess"
