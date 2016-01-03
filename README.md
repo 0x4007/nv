@@ -1,6 +1,30 @@
 # NV
 Performance-first front-end framework.
 
+# Example
+
+As seen on http://inventum.digital
+
+```javascript
+nv({
+	spreads: [
+		"spreads/main", // This is a directory, NV will scrape the URLs if your server outputs a directory map. Also if you have your server return an array, NV will JSON.parse it.
+		"spreads/body/services.htm",
+		"spreads/body/portfolio.htm", // I manually put in spread URLs for fine control of the order. Scraping will just add the spreads by alphabetical order.
+		"spreads/body/location.htm",
+		"spreads/footer.htm"
+	]
+}, function() {
+	nv.functions.get([ // Callback to load in more stuff after the page renders.
+		"js/utils.js",
+		"js/videosearch.js",
+		"js/indexeddb.js"
+	]);
+});
+```
+
+# Usage
+
 ```javascript
 nv({}, fn);
 ```
