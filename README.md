@@ -1,20 +1,22 @@
 # NV
-Performance-first-engineered front-end framework.
+Performance-first front-end framework.
 
-```nv({}, fn);```
+```javascript
+nv({}, fn);
+```
 Usage: (settings object, callback function.)
 
 Settings may include {
-	arrays: {},
-	booleans: {},
-	events: {},
-	functions:{},
-	numbers: {},
-	objects: {},
-	selectors: {},
-	spreads: {}
-	strings: {},
-	subroutine: []
+* arrays: {},
+* booleans: {},
+* events: {},
+* functions:{},
+* numbers: {},
+* objects: {},
+* selectors: {},
+* spreads: {}
+* strings: {},
+* subroutine: []
 }
 
 Settings allows you to store and access your data in one central object, accessible after the framework is launched at `nv.*`
