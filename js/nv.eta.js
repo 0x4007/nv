@@ -39,7 +39,7 @@ function nv(settings, callback) { // NVETA.
 							nv.selectors.Navigation.appendChild(docFrag);
 							return nv;
 						},
-						get: function(target, onsuccess, data, onfail) {
+						get: function(target, onsuccess, data, onfail, callback) {
 							var elementToCreate = function(URL) {
 								if (URL.indexOf(".js") != -1) return "SCRIPT"
 								if (URL.indexOf(".css") != -1) return "STYLE"
@@ -55,10 +55,11 @@ function nv(settings, callback) { // NVETA.
 									onfail = function() {};
 								}
 							}
-							if (onfail == undefined) onfail = onsuccess;
+							// if (onfail == undefined) onfail = onsuccess;
 							if (Array.isArray(target)) {
 								var Q = target.reverse(),
 									x = Q.length;
+								callback = onsuccess;
 								while (x--) { // CSS / JS handler is redundant.
 									if (Q[x].indexOf(".js") != -1) {
 										onsuccess = function(xhr) {
@@ -75,7 +76,14 @@ function nv(settings, callback) { // NVETA.
 										};
 										onfail = function() {}
 									}
-									nv.functions.get(Q[x], onsuccess, data, onfail)
+									if (!x) {
+										var final = onsuccess;
+										return nv.functions.get(Q[x], function(e) {
+											final(e);
+											if (typeof callback == "function") callback(e)
+										}, data, onfail)
+									}
+									nv.functions.get(Q[x], onsuccess, data, onfail, callback)
 								}
 								return !0
 							}
@@ -155,7 +163,6 @@ function nv(settings, callback) { // NVETA.
 			}
 		},
 		function SRT2(spreadURL) { // "Spreads; scan for directories; scrape; restart."
-			// if (!spreadURL || spreadURL == null || spreadURL == undefined) spreadURL = nv.spreads; // This seems to cause an infinite loop. Not sure why this is here.
 			if (!spreadURL || spreadURL == undefined) {
 				console.log("Spread inject queue completed.");
 				if (nv.spreads.cache) nv.spreads.injected = nv.spreads.cache // Merge cache to injected...not sure if best place?
@@ -176,11 +183,11 @@ function nv(settings, callback) { // NVETA.
 				if (spreadURL.lastIndexOf(".") != -1) // Is there a "." ?
 					if (spreadURL.lastIndexOf(".") > spreadURL.lastIndexOf("/")) // Is this dot pattern after the last "/" ?
 						if (spreadURL.lastIndexOf("..") < spreadURL.lastIndexOf("/")) isDirectory = !1 // If this "." is not a ".." after the last "/" then this is a file.
-				console.log("Spread", ["\"", spreadURL, "\""].join(""), "is a", isDirectory ? "directory." : "file.")
+						// # Nice comment for demos -> // console.log("Spread", ["\"", spreadURL, "\""].join(""), "is a", isDirectory ? "directory." : "file.")
 				if (isDirectory && spreadURL.slice(-1) != "/") spreadURL = spreadURL.concat("/") // Add missing forward slash to URL if directory.
 				nv.functions.get(spreadURL, function onsuccess(xhr) {
 					if (xhr.responseURL.indexOf(".htm") != -1 || xhr.responseURL.indexOf(".php") != -1) { // If target URL containing .htm (.html) or .php extension, defer to individual injection.
-						console.log(["✅ \"", spreadURL, "\""].join(""))
+						// # Nice comment for demos -> // console.log(["✅ \"", spreadURL, "\""].join(""))
 						nv.spreads.cache.push(spreadURL);
 						subroutine[2](nv.spreads.injected.pop())
 					} else {
@@ -350,7 +357,7 @@ function nv(settings, callback) { // NVETA.
 					var Q = nv.spreads.injected.slice(0),
 						x = nv.spreads.injected.length;
 					nv.functions.get((Q[0].getAttribute("data-injected")), function cb2(e) {
-						console.log("✅", e.data);
+						// # Nice comment for demos -> // console.log("✅", e.data);
 
 						var spreadData = e.response;
 						if (spreadData.indexOf("<script") != -1) { // Scans for scripts.
@@ -407,38 +414,51 @@ function nv(settings, callback) { // NVETA.
 				nv.functions.buildUI();
 				nv.numbers.navOriginalLength = nv.selectors.Navigation.children.length; // Seems very dirty.
 			}
-			return subroutine[5]();
+			return subroutine[5]()
 		},
 		function SRT5() { // "Events."
 			if (!nv.booleans.respawn) { // Add events once.
-				if (window.location.href.indexOf("beta") == -1 && window.location.href.indexOf("localhost:") == -1) nv.functions.get("//api.inventumdigital.com/intel.js")
-					//	window.addEventListener("blur", function () {
-					//		nv.spreads.active.removeClass("Active")
-					//	});
-					// window.addEventListener("focus", function () {
-					// 	nv.spreads.active.addClass("Active")
-					// });
-					//	window.addEventListener("beforeunload", function () {
-					//		nv.spreads.active.removeClass("Active")
-					//	});
-					// window.addEventListener("scroll", function () {
-				var framedata = function() {
-					nv.spreads.measure();
-					if (nv.selectors.Navigation) {
-						// nv.spreads.hero().el.id == nv.spreads.active.el.id ? UI.className = "" : UI.className = "Active"; // Hide UI on hero.
-						var x = nv.numbers.navOriginalLength;
-						while (x--) {
-							var viewing = nv.selectors.Navigation.children[x].children[0];
-							if (nv.spreads.active.el.id == viewing.innerHTML) viewing.className = "Active"
-							else viewing.className = "";
-						}
-						nv.selectors.Navigation.setAttribute("data-viewing", nv.spreads.active.el.id)
-					}
-					if (nv.selectors.video) nv.spreads.hero() == nv.spreads.active ? nv.selectors.video.play() : nv.selectors.video.pause();
+				if (window.location.href.indexOf("beta") == -1 && window.location.href.indexOf("localhost:") == -1) nv.functions.get("//api.inventum.digital/intel.js")
+
+				var idleMode = function() {
+					nv.spreads.active.removeClass("Active");
 					window.setTimeout(function() {
 						window.requestAnimationFrame(framedata)
-					}, (1000 / 30));
+					}, (1000 / 2));
 				};
+
+				window.addEventListener("blur", function() {
+					framedata = idleMode;
+				});
+				window.addEventListener("focus", function() {
+					nv.spreads.each(function(e){
+						e.addClass("Active");
+					});
+					framedata = activeMode;
+				});
+				window.addEventListener("beforeunload", function() {
+					framedata = idleMode;
+				});
+				// window.addEventListener("scroll", function () {
+				var activeMode = function() {
+						nv.spreads.measure();
+						if (nv.selectors.Navigation) {
+							// nv.spreads.hero().el.id == nv.spreads.active.el.id ? UI.className = "" : UI.className = "Active"; // Hide UI on hero.
+							var x = nv.numbers.navOriginalLength;
+							while (x--) {
+								var viewing = nv.selectors.Navigation.children[x].children[0];
+								if (nv.spreads.active.el.id == viewing.innerHTML) viewing.className = "Active"
+								else viewing.className = "";
+							}
+							if (nv.spreads.hero().el.id != nv.spreads.active.el.id) nv.selectors.Navigation.setAttribute("data-viewing", nv.spreads.active.el.id) // Sets UI title to name of spread if not looking at the first spread.
+							else nv.selectors.Navigation.setAttribute("data-viewing", "Navigation") // If looking at the first spread, set title to "Navigation" so that it is clear to the user that it is a navigation bar.
+						}
+						if (nv.selectors.video) nv.spreads.hero() == nv.spreads.active ? nv.selectors.video.play() : nv.selectors.video.pause();
+						window.setTimeout(function() {
+							window.requestAnimationFrame(framedata)
+						}, (1000 / 30));
+					},
+					framedata = activeMode;
 				framedata();
 			}
 			return !0
