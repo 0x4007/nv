@@ -61,10 +61,15 @@ NV prefers to work with a DOM that includes the following, but will still work e
 <body>
 <main id="Spreads">
 	<section> <!-- With an ID -->
-	<!-- With initial view content -->
+		<h1>
+			Hello, World!<!-- With initial view content -->
+		</h1>
 	</section>
 </main>
 <UI id="UI">
+	<ul id="Navigation"><!-- Can be any tag name, "UL" or "OL" is probably best. -->
+	<!-- Spread hash navigation will be added here automatically, based on the filename of the spread. -->
+	</ul>
 </UI>
 </body>
 ```
