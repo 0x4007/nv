@@ -157,7 +157,7 @@ function nv(settings, callback) { // NV Theta
             }
             var $ = nv.selectors;
             if (!$.ui) $.ui = document.getElementById("UI") || document.getElementsByClassName("UI")[0] || document.getElementsByTagName("UI")[0] || !1 // If no UI tag, find it.
-            else { // Navigation must be present only within UI. If no UI found, implies no Navigation.
+            if ($.ui) { // Navigation must be present only within UI. If no UI found, implies no Navigation.
                 if (!$.ui.id) $.ui.id = "UI" // If no UI id, assign it.
                 if (!$.navigation) $.navigation = document.getElementById("Navigation") || $.ui.getElementsByClassName("Navigation")[0] || $.ui.getElementsByTagName("ol")[0] || $.ui.getElementsByTagName("ul")[0] || $.ui.getElementsByTagName("nav")[0] || !1
                 if (!$.navigation.id) $.navigation.id = "Navigation"
