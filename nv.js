@@ -180,7 +180,7 @@ function nv(settings, callback) { // NV Theta
         function SRT2(spreadURL) { // "Spreads; scan for directories; scrape; restart."
             if (!spreadURL || spreadURL == undefined) {
                 console.log("Spread inject queue completed.");
-                if (nv.spreads.cache) nv.spreads.injected = nv.spreads.cache // Merge cache to injected...not sure if optimal place?
+                if (nv.spreads.cache) nv.spreads.injected = nv.spreads.cache.reverse() // Merge cache to injected...not sure if optimal place?
                 return subroutine[3]()
             }
             /**
@@ -273,7 +273,7 @@ function nv(settings, callback) { // NV Theta
                         this.injected = [];
                         var x = injectURLs.injected.length,
                             sectionSRC = document.createElement("SECTION");
-                            injectURLs.injected = injectURLs.injected.reverse();
+                            // injectURLs.injected = injectURLs.injected.reverse();
                         while (x--) {
                             var section = sectionSRC.cloneNode(!1); // The most efficient way to recreate an element.
                             if (typeof injectURLs.injected[x] == "string") { // URL expected. This is the proper way to pass in injected spreads.
@@ -290,7 +290,7 @@ function nv(settings, callback) { // NV Theta
                             // if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[1]); // Place spread in DOM before second spread.
                             // else
                             nv.selectors.spreads.appendChild(section) // If no existing spread(s), just append this spread as child of #Spreads.
-                            this.injected.unshift(section); // Place this spread ("section") into beginning of nv.spreads.injected
+                            this.injected.push(section); // Place this spread ("section") into beginning of nv.spreads.injected
                         }
                     }
                     this.register(DOMSpreads);
