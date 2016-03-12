@@ -1,0 +1,9 @@
+#Spreads>*>* .border>*{border:1px solid #fff}
+#Spreads>:first-child aside{color:rgba(255,255,255,.75)}
+#Spreads>:first-child div.hint{border-color:#fff transparent transparent}
+body,html,#Spreads{color:#fff}
+body{background:#000}
+form>article{background-color:#000}
+svg{fill:#fff}
+textarea,input,input[type="button"]{color:#fff}
+textarea:hover,input:hover{color:#fff}

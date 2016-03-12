@@ -1,0 +1,5 @@
+#Navigation:hover{background-color:rgba(0,0,0,.75)}
+#Navigation{background-color:rgba(0,0,0,.125)}
+#UI>* a:active,#UI>* a.Active{color:#bfbfbf;border-bottom:1px solid rgba(255,255,255,.9375)}
+#UI>*{color:#bfbfbf}
+#UI>* a:hover{color:#fff}
