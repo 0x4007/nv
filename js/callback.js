@@ -1,1 +1,0 @@
-nv.functions.cascade([nv.selectors.TOOLBAR, nv.selectors.UI])

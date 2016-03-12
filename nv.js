@@ -1,4 +1,4 @@
-function nv(settings, callback) { // NVETA.
+function nv(settings, callback) { // NV Theta
     "use strict";
     var subroutine = [
         function SRT0(settings, callback) { // "nv initialization."
@@ -35,8 +35,8 @@ function nv(settings, callback) { // NVETA.
                                 li.appendChild(a);
                                 docFrag.appendChild(li)
                             });
-                            if (nv.booleans.respawn) nv.selectors.Navigation.innerHTML = "" // If respawned, wipe nav clean.
-                            nv.selectors.Navigation.appendChild(docFrag);
+                            if (nv.booleans.respawn) nv.selectors.navigation.innerHTML = "" // If respawned, wipe nav clean.
+                            nv.selectors.navigation.appendChild(docFrag);
                             return nv;
                         },
                         get: function(target, onsuccess, data, onfail, callback) {
@@ -48,14 +48,16 @@ function nv(settings, callback) { // NVETA.
                             if (onsuccess == undefined) { // Assumes .JS or .CSS target.
                                 if (typeof target == "string") {
                                     onsuccess = function(xhr) {
-                                        var s = document.createElement(elementToCreate(target));
-                                        s.textContent = xhr.responseText;
+                                        var s = document.createElement(elementToCreate(target)),
+                                            tempid = xhr.responseURL.split("/");
+                                        tempid = tempid[tempid.length - 1];
+                                        s.setAttribute("data-source", tempid);
+                                        s.textContent = xhr.responseText.concat([("\n//# sourceURL="), xhr.responseURL].join(""));
                                         document.body.appendChild(s);
                                     };
-                                    onfail = function() {};
+                                    if (onfail == undefined) onfail = function() {}
                                 }
                             }
-                            // if (onfail == undefined) onfail = onsuccess;
                             if (Array.isArray(target)) {
                                 var Q = target.reverse(),
                                     x = Q.length;
@@ -63,18 +65,24 @@ function nv(settings, callback) { // NVETA.
                                 while (x--) { // CSS / JS handler is redundant.
                                     if (Q[x].indexOf(".js") != -1) {
                                         onsuccess = function(xhr) {
-                                            var s = document.createElement("SCRIPT");
-                                            s.textContent = xhr.responseText;
+                                            var s = document.createElement("SCRIPT"),
+                                                tempid = xhr.responseURL.split("/");
+                                            tempid = tempid[tempid.length - 1];
+                                            s.setAttribute("data-source", tempid);
+                                            s.textContent = xhr.responseText.concat([("\n//# sourceURL="), xhr.responseURL].join(""));
                                             document.body.appendChild(s);
                                         };
-                                        onfail = function() {}
+                                        if (onfail == undefined) onfail = function() {}
                                     } else if (Q[x].indexOf(".css") != -1) {
                                         onsuccess = function(xhr) {
-                                            var s = document.createElement("STYLE");
-                                            s.textContent = xhr.responseText;
+                                            var s = document.createElement("STYLE"),
+                                                tempid = xhr.responseURL.split("/");
+                                            tempid = tempid[tempid.length - 1];
+                                            s.setAttribute("data-source", tempid);
+                                            s.textContent = xhr.responseText.concat([("\n//# sourceURL="), xhr.responseURL].join(""));
                                             document.body.appendChild(s);
                                         };
-                                        onfail = function() {}
+                                        if (onfail == undefined) onfail = function() {}
                                     }
                                     if (!x) {
                                         var final = onsuccess;
@@ -89,9 +97,16 @@ function nv(settings, callback) { // NVETA.
                             }
                             var xhr = new XMLHttpRequest();
                             xhr.data = data;
+
+                            if (xhr.responseURL === undefined) xhr.responseURL = target.indexOf('//') === -1 ? window.location.href.concat(target) : target // Polyfill, responseURL is not common
+
                             xhr.open("GET", target);
                             xhr.onloadend = function() {
-                                xhr.status == 200 ? onsuccess(xhr) : onfail(xhr);
+                                if (xhr.status == 200) onsuccess(xhr)
+                                else if (xhr.status == 500) {
+                                    console.warn("Server error, retrying request.");
+                                    nv.functions.get(xhr.responseURL, onsuccess, data, onfail, callback);
+                                } else onfail(xhr)
                             };
                             xhr.send();
                         }
@@ -102,7 +117,7 @@ function nv(settings, callback) { // NVETA.
                     spreads: {
                         injected: [],
                         models: [],
-                        cache: [] // Temporary for initialization.
+                        cache: []
                     },
                     strings: {},
                     subroutine: subroutine,
@@ -141,22 +156,22 @@ function nv(settings, callback) { // NVETA.
                 }
             }
             var $ = nv.selectors;
-            if (!$.UI) $.UI = document.getElementById("UI") || document.getElementsByClassName("UI")[0] || document.getElementsByTagName("UI")[0] || !1 // If no UI tag, find it.
+            if (!$.ui) $.ui = document.getElementById("UI") || document.getElementsByClassName("UI")[0] || document.getElementsByTagName("UI")[0] || !1 // If no UI tag, find it.
             else { // Navigation must be present only within UI. If no UI found, implies no Navigation.
-                if (!$.UI.id) $.UI.id = "UI" // If no UI id, assign it.
-                if (!$.Navigation) $.Navigation = document.getElementById("Navigation") || $.UI.getElementsByClassName("Navigation")[0] || $.UI.getElementsByTagName("ol")[0] || $.UI.getElementsByTagName("ul")[0] || $.UI.getElementsByTagName("nav")[0] || !1
-                if (!$.Navigation.id) $.Navigation.id = "Navigation"
+                if (!$.ui.id) $.ui.id = "UI" // If no UI id, assign it.
+                if (!$.navigation) $.navigation = document.getElementById("Navigation") || $.ui.getElementsByClassName("Navigation")[0] || $.ui.getElementsByTagName("ol")[0] || $.ui.getElementsByTagName("ul")[0] || $.ui.getElementsByTagName("nav")[0] || !1
+                if (!$.navigation.id) $.navigation.id = "Navigation"
             }
-            $.Spreads = document.getElementById('Spreads') || !1
-            if ($.Spreads) {
-                if (!$.Spreads.id) $.Spreads.id = "Spreads"
+            $.spreads = document.getElementById('Spreads') || !1
+            if ($.spreads) {
+                if (!$.spreads.id) $.spreads.id = "Spreads"
                 if (nv.spreads.injected.length) return subroutine[2](nv.spreads.injected) // Injection and native spreads.
                 else return subroutine[3]() // Native only.
             } else {
                 if (nv.spreads.injected.length) { // Injection only.
                     var MAIN = document.createElement("MAIN");
                     MAIN.id = "Spreads";
-                    $.Spreads = MAIN;
+                    $.spreads = MAIN;
                     document.body.appendChild(MAIN);
                     return subroutine[2](nv.spreads.injected);
                 } else return subroutine[4]() // Skip spread initializations (toolkit mode).
@@ -165,15 +180,14 @@ function nv(settings, callback) { // NVETA.
         function SRT2(spreadURL) { // "Spreads; scan for directories; scrape; restart."
             if (!spreadURL || spreadURL == undefined) {
                 console.log("Spread inject queue completed.");
-                if (nv.spreads.cache) nv.spreads.injected = nv.spreads.cache // Merge cache to injected...not sure if best place?
-                return subroutine[3]();
+                if (nv.spreads.cache) nv.spreads.injected = nv.spreads.cache // Merge cache to injected...not sure if optimal place?
+                return subroutine[3]()
             }
             /**
-             * This is the auto-spread-injector function. These arguments are not finished. Attempting to make queue work. See below.
+             * This is the auto-spread-injector function.
              * I unintentionally ended up building a href scraper originally intended for the Apache auto-generated directory listing.
-             * Scraper can be unintentionally activated if "spreads(nv.spreads)" == file with no extension in URL, for example, for when "index.html" is automatically served up for "//invntm.com", but ".html" is not present in the URL.
-             * Step one: check if URL or array of URLs.
-             * Download array synchronously.
+             * Scraper can be unintentionally activated if user points to a directory, not a file explicitly, determined by no file extension in URL; for example, for when "index.html" is automatically served up for "//invntm.com", but ".html" is not present in the URL.
+             * Downloads array synchronously.
              */
             if (Array.isArray(spreadURL)) { // If array, pull out elements and fetch. This is a simple queue system.
                 if (spreadURL.length) return subroutine[2](nv.spreads.injected.pop())
@@ -182,7 +196,7 @@ function nv(settings, callback) { // NVETA.
                 var isDirectory = !0; // Assume that this URL points to a directory.
                 if (spreadURL.lastIndexOf(".") != -1) // Is there a "." ?
                     if (spreadURL.lastIndexOf(".") > spreadURL.lastIndexOf("/")) // Is this dot pattern after the last "/" ?
-                        if (spreadURL.lastIndexOf("..") < spreadURL.lastIndexOf("/")) isDirectory = !1 // If this "." is not a ".." after the last "/" then this is a file.
+                        if (spreadURL.lastIndexOf("..") <= spreadURL.lastIndexOf("/")) isDirectory = !1 // If this "." is not a ".." after the last "/" then this is a file.
                         // # Nice comment for demos -> // console.log("Spread", ["\"", spreadURL, "\""].join(""), "is a", isDirectory ? "directory." : "file.")
                 if (isDirectory && spreadURL.slice(-1) != "/") spreadURL = spreadURL.concat("/") // Add missing forward slash to URL if directory.
                 nv.functions.get(spreadURL, function onsuccess(xhr) {
@@ -201,7 +215,7 @@ function nv(settings, callback) { // NVETA.
                                     options.push((raw[x].replace('a href="', '')).slice(0, -1)) // Extracts URL from within 'a href="', '"' wrapper.
                                 }
                             }
-                        } else { // If HTML is not detected, assume that it is the proper array of URLs to spreads to inject. This could be the CMS array( ! )
+                        } else { // If HTML is not detected, assume that it is the proper array of URLs to spreads to inject. This could be a CMS array( ! )
                             try {
                                 var options = JSON.parse(xhr.response); // JSON.parse is always risky business, so wrapping inside of try catch.
                             } catch (e) {
@@ -209,20 +223,16 @@ function nv(settings, callback) { // NVETA.
                                 return subroutine[2](nv.spreads.injected.pop()); // Exit
                             }
                         }
-                        var x = 0;
-                        while (options.length - 1 > x++) { // This has not been tested with ++ direction.
+                        var x = -1;
+                        while (options.length - 1 > x++) {
                             if (Array.isArray(options[x])) {
                                 var y = 0, // Array length of multidimensional (internal) array. [ "" , [ "" , ""] , "" ]
                                     z = y; // Offset.
                                 while (options[x].length - 1 > y++) options.unshift(options[x][y]) // Flatten multidimensional array.
                                 options.splice(x -= z, 1); // Remove multidimensional array.
-                                /**
-                                 * Could use more testing!
-                                 */
                             }
                             if (options[x].match(/.+(?=(\.html?$|\.php$)).+/i) && options[x].charAt(0) != "." && options[x] != "index.php") {
-                                nv.spreads.cache.push(spreadURL.concat(options[x])); // ajax "cache" store in ".cache". Also on line 180.
-                                // nv.spreads.push(spreadURL.concat(options[x]));
+                                nv.spreads.cache.push(spreadURL.concat(options[x])); // ajax "cache" store in ".cache". Also near line 180.
                                 console.log(["✅ \"", options[x], "\""].join(""))
                             } else console.log(["❌ \"", options[x], "\""].join(""))
                         }
@@ -233,7 +243,11 @@ function nv(settings, callback) { // NVETA.
                     subroutine[2](nv.spreads.injected.pop()); // Proceed to next.
                 });
             } else { // Constructed spread (object) encountered, likely a respawn. This is now damage control.
-                nv.spreads.injected = []; // Wipe clean because one has already been popped off.
+                nv.spreads.injected = []; // Wipe clean because one spread has already been popped off.
+                nv.spreads.scripts = {
+                    codes: [],
+                    urls: []
+                };
                 var incomingSpreads = nv.spreads.cache,
                     collisions = [],
                     x = incomingSpreads.length;
@@ -242,12 +256,12 @@ function nv(settings, callback) { // NVETA.
                         if (incomingSpreads[x].slice(incomingSpreads[x].lastIndexOf("/") + 1).toLowerCase().indexOf(s.el.id.toLowerCase()) !== -1) collisions.push(incomingSpreads.splice(x, 1)) // Reject the conflict.
                     })
                 }
-                console.error(["❌ Conflicts rejected: \"", collisions, "\""].join("")) // Report collisions.
+                if (collisions.length) console.error(["❌ Conflicts rejected: \"", collisions, "\""].join("")) // Report collisions.
                 return subroutine[2](nv.spreads.cache.pop()) // Damage control complete.
             }
         },
         function SRT3() { // "Spread construction."
-            if (nv.selectors.Spreads) {
+            if (nv.selectors.spreads) {
                 var Spreads = function Spreads(DOMSpreads, injectURLs) { // Spread constructor and adds each to controller. Also marks which spreads will be AJAX filled later in the program.
                     this.models = []; // Spreads completed prototype looks like: ".models", ".injected", ".active", ".scripts".
                     this.cache = [];
@@ -256,7 +270,7 @@ function nv(settings, callback) { // NVETA.
                             urls: [],
                             codes: []
                         };
-                        this.injected = []; // nv.spreads.active serves as the URL cache in the SEPERATE OBJECT for dev clarity, must change later.
+                        this.injected = [];
                         var x = injectURLs.injected.length,
                             sectionSRC = document.createElement("SECTION");
                         while (x--) {
@@ -264,12 +278,7 @@ function nv(settings, callback) { // NVETA.
                             if (typeof injectURLs.injected[x] == "string") { // URL expected. This is the proper way to pass in injected spreads.
                                 var tempid = injectURLs.injected[x].split("/");
                                 section.setAttribute("data-injected", injectURLs.injected[x]); // Stores the URL of the spread's target file, read later during AJAX for injection.
-                                section.innerHTML = ['<article>Inserting "', injectURLs.injected[x], '" now.</article>'].join(""); // User feedback during inject process.
-                            } else if (typeof injectURLs.injected[x] == "object" && injectURLs.injected[x] instanceof HTMLElement) { // Handler for improper way to pass in injected spreads (as an actual spread HTML object.)
-                                if (injectURLs.injected[x].getAttribute("data-injected")) {
-                                    console.warn("You passed in a previously injected spread in \"spreads.injected\". Please pass in a URL.");
-                                    continue; // Skip this one.
-                                }
+                                section.innerHTML = ['<article><ins>Inserting "', injectURLs.injected[x], '" now.</ins></article>'].join(""); // User feedback during inject process.
                             } else {
                                 console.error(injectURLs.injected[x], "You passed in something unexpected for the injected spread. Please pass in a URL.");
                                 continue;
@@ -278,7 +287,7 @@ function nv(settings, callback) { // NVETA.
                             section.id = tempid.charAt(0).toUpperCase().concat(tempid.slice(1)); // Capitalize the first character.
                             // if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[DOMSpreads.length - 1]); // Place spread in DOM before last spread.
                             if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[1]); // Place spread in DOM before second spread.
-                            else nv.selectors.Spreads.appendChild(section) // If no existing spread(s), just append this spread as child of #Spreads.
+                            else nv.selectors.spreads.appendChild(section) // If no existing spread(s), just append this spread as child of #Spreads.
                             this.injected.unshift(section); // Place this spread ("section") into beginning of nv.spreads.injected
                         }
                     }
@@ -315,7 +324,6 @@ function nv(settings, callback) { // NVETA.
                         spreads.each(function(spread) {
                             var spreadTop = spread.el.getBoundingClientRect().top;
                             if (spreadTop < window.innerHeight / 2) spreads.active = spread
-                                // if (spreadTop < 16 && spreadTop > -16) window.location.hash = "#".concat(spread.el.id)
                         });
                         spreads.each(function(spread) {
                             if (spread == spreads.active) spread.addClass("Active")
@@ -361,7 +369,7 @@ function nv(settings, callback) { // NVETA.
                         return this;
                     }
                 };
-                nv.spreads = new Spreads(nv.selectors.Spreads.children, nv.spreads) // Register main#Spreads children, and injected spreads, to controller.
+                nv.spreads = new Spreads(nv.selectors.spreads.children, nv.spreads) // Register main#Spreads children, and injected spreads, to controller.
                 if (nv.spreads.injected != undefined && nv.spreads.injected.length) {
                     var Q = nv.spreads.injected.slice(0),
                         x = nv.spreads.injected.length;
@@ -401,34 +409,36 @@ function nv(settings, callback) { // NVETA.
                     }, Q.shift())
                 }
             }
-            return subroutine[4]();
+            return subroutine[4]()
         },
         function SRT4() { // "Scan UI; build navigation."
-            nv.functions.scanUI(nv.selectors.UI, function(node) { // Registers UI and all child elements thereof to nv.selectors for convenience.
+            nv.functions.scanUI(nv.selectors.ui, function(node) { // Registers UI and all child elements thereof to nv.selectors for convenience.
                 if (node.nodeType == 1) { // Ensures that it will only register nodes with TAGs, unlike text nodes.
-                    if (nv.selectors[(node.id || node.className || node.tagName)] == undefined) nv.selectors[(node.id || node.className || node.tagName)] = node // If slot in nv.selectors is empty, register DOM element.
-                    else if (nv.selectors[(node.id || node.className || node.tagName)] === node) { // If slot is occupied by the identical node.
+                    var uniqueRef = node.id.toLowerCase() || node.className.toLowerCase() || node.tagName.toLowerCase();
+                    if (nv.selectors[uniqueRef] == undefined) nv.selectors[uniqueRef] = node // If slot in nv.selectors is empty, register DOM element.
+                    else if (nv.selectors[uniqueRef] === node) { // If slot is occupied by the identical node.
                         // Do nothing.
                     } else { // Slot is not occupied by identical node.
                         var x = 1;
                         ! function noclobber(x) { // Increments the property name until a slot is available.
-                            if (nv.selectors[(node.id || node.className || node.tagName) + ++x] == undefined) nv.selectors[(node.id || node.className || node.tagName) + x] = node
+                            if (nv.selectors[uniqueRef.concat(++x)] == undefined) nv.selectors[uniqueRef.concat(x)] = node
                             else return noclobber(x)
                         }(x);
                     }
                 }
             });
-            if (nv.selectors.Navigation) {
+            if (nv.selectors.navigation) {
                 nv.functions.buildUI();
-                nv.numbers.navOriginalLength = nv.selectors.Navigation.children.length; // Seems very dirty.
+                nv.numbers.navOriginalLength = nv.selectors.navigation.children.length; // Seems very dirty.
             }
             return subroutine[5]()
         },
         function SRT5() { // "Events."
             if (!nv.booleans.respawn) { // Add events once.
-                if (window.location.href.indexOf("beta") == -1 && window.location.href.indexOf("localhost:") == -1) nv.functions.get("//api.inventum.digital/intel.js")
+                if (window.location.href.indexOf("beta") == -1 && window.location.href.indexOf("localhost:") == -1) nv.functions.get("//api.inventum.digital/intel.min.js")
+                else nv.booleans.dev = !0
                 var idleMode = function() {
-                    nv.spreads.active.removeClass("Active");
+                    // nv.spreads.active.removeClass("Active");
                     window.setTimeout(function() {
                         window.requestAnimationFrame(framedata)
                     }, (1000 / 2));
@@ -445,21 +455,28 @@ function nv(settings, callback) { // NVETA.
                 window.addEventListener("beforeunload", function() {
                     framedata = idleMode;
                 });
-                // window.addEventListener("scroll", function () {
                 var activeMode = function() {
                         nv.spreads.measure();
-                        if (nv.selectors.Navigation) {
+                        if (nv.selectors.navigation) {
                             // nv.spreads.hero().el.id == nv.spreads.active.el.id ? UI.className = "" : UI.className = "Active"; // Hide UI on hero.
                             var x = nv.numbers.navOriginalLength;
                             while (x--) {
-                                var viewing = nv.selectors.Navigation.children[x].children[0];
+                                var viewing = nv.selectors.navigation.children[x].children[0];
                                 if (nv.spreads.active.el.id == viewing.innerHTML) viewing.className = "Active"
                                 else viewing.className = "";
                             }
-                            if (nv.spreads.hero().el.id != nv.spreads.active.el.id) nv.selectors.Navigation.setAttribute("data-viewing", nv.spreads.active.el.id) // Sets UI title to name of spread if not looking at the first spread.
-                            else nv.selectors.Navigation.setAttribute("data-viewing", "Navigation") // If looking at the first spread, set title to "Navigation" so that it is clear to the user that it is a navigation bar.
+                            if (nv.spreads.hero().el.id != nv.spreads.active.el.id) nv.selectors.navigation.setAttribute("data-viewing", nv.spreads.active.el.id) // Sets UI title to name of spread if not looking at the first spread.
+                            else nv.selectors.navigation.setAttribute("data-viewing", "Navigation") // If looking at the first spread, set title to "Navigation" so that it is clear to the user that it is a navigation bar.
                         }
-                        if (nv.selectors.video) nv.spreads.hero() == nv.spreads.active ? nv.selectors.video.play() : nv.selectors.video.pause();
+                        if (nv.selectors.video) {
+                            if (nv.spreads.hero() == nv.spreads.active) {
+                                nv.selectors.video.play();
+                                nv.selectors.video.setAttribute("data-viewing", true);
+                            } else {
+                                nv.selectors.video.pause();
+                                nv.selectors.video.setAttribute("data-viewing", false);
+                            }
+                        }
                         window.setTimeout(function() {
                             window.requestAnimationFrame(framedata)
                         }, (1000 / 30));
