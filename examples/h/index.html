@@ -1,0 +1,28 @@
+<body>
+    <head>
+        <link rel="stylesheet" href="../styles/nv.css" />
+        <link rel="stylesheet" href="../styles/nv-dark.css" />
+        <link rel="stylesheet" href="../styles/ui.css" />
+        <link rel="stylesheet" href="../styles/ui-dark.css" />
+    </head>
+    <main id="Spreads">
+    <section>
+        <h1>
+        App Example
+        </h1>
+    </section>
+    </main>
+    <ui>
+    <ol>
+    </ol>
+    </ui>
+    <script src="../../nv.js"></script>
+    <script>
+    nv({
+        spreads: '../abc-spreads',
+        strings: {"alert-test": "hello"}
+    }, function(){ // Callback reading a variable passed in to app settings.
+        alert(nv.strings["alert-test"]);
+    })
+    </script>
+</body>
