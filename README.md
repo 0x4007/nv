@@ -13,7 +13,7 @@ Usage: (settings object, callback function.)
 
 # Example
 
-As seen on http://inventum.digital
+As seen on http://inventum.digital/
 
 ```javascript
 nv({

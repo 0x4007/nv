@@ -231,7 +231,7 @@ function nv(settings, callback) { // NV Theta
                                 while (options[x].length - 1 > y++) options.unshift(options[x][y]) // Flatten multidimensional array.
                                 options.splice(x -= z, 1); // Remove multidimensional array.
                             }
-                            if (options[x].match(/.+(?=(\.html?$|\.php$)).+/i) && options[x].charAt(0) != "." && options[x] != "index.php") {
+                            if (options[x].match(/.+(?=(\.html?$|\.php$)).+/i) && (options[x].charAt(1) == "." || options[x].charAt(0) != ".") && options[x] != "index.php") {
                                 nv.spreads.cache.push(spreadURL.concat(options[x])); // ajax "cache" store in ".cache". Also near line 180.
                                 console.log(["✅ \"", options[x], "\""].join(""))
                             } else console.log(["❌ \"", options[x], "\""].join(""))
@@ -273,6 +273,7 @@ function nv(settings, callback) { // NV Theta
                         this.injected = [];
                         var x = injectURLs.injected.length,
                             sectionSRC = document.createElement("SECTION");
+                            injectURLs.injected = injectURLs.injected.reverse();
                         while (x--) {
                             var section = sectionSRC.cloneNode(!1); // The most efficient way to recreate an element.
                             if (typeof injectURLs.injected[x] == "string") { // URL expected. This is the proper way to pass in injected spreads.
@@ -286,8 +287,9 @@ function nv(settings, callback) { // NV Theta
                             tempid = tempid[tempid.length - 1].split(".")[0]; // Remove AJAX target file path, and file extension (typically ".html")
                             section.id = tempid.charAt(0).toUpperCase().concat(tempid.slice(1)); // Capitalize the first character.
                             // if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[DOMSpreads.length - 1]); // Place spread in DOM before last spread.
-                            if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[1]); // Place spread in DOM before second spread.
-                            else nv.selectors.spreads.appendChild(section) // If no existing spread(s), just append this spread as child of #Spreads.
+                            // if (DOMSpreads[1]) DOMSpreads[1].parentNode.insertBefore(section, DOMSpreads[1]); // Place spread in DOM before second spread.
+                            // else
+                            nv.selectors.spreads.appendChild(section) // If no existing spread(s), just append this spread as child of #Spreads.
                             this.injected.unshift(section); // Place this spread ("section") into beginning of nv.spreads.injected
                         }
                     }
