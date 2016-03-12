@@ -4,6 +4,13 @@ Engineered from the ground-up to achieve maximum performance.
 
 A performance-first front-end framework.
 
+# Usage
+
+```javascript
+nv({}, fn);
+```
+Usage: (settings object, callback function.)
+
 # Example
 
 As seen on http://inventum.digital
@@ -25,13 +32,6 @@ nv({
 	]);
 });
 ```
-
-# Usage
-
-```javascript
-nv({}, fn);
-```
-Usage: (settings object, callback function.)
 
 Settings may include:
 * arrays: {},
