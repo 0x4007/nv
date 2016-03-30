@@ -486,7 +486,7 @@ function nv(settings, callback) { // NV Theta
                     framedata = activeMode;
                 if (nv.spreads.measure) framedata();
             }
-            return !0
+            return nv
         },
         function SRT6(callback) { // Handle scripts within injected spreads. Called synchronously after all spreads are injected.
             var scriptSRC = document.createElement("SCRIPT");
@@ -508,7 +508,7 @@ function nv(settings, callback) { // NV Theta
             }
             if (window.location.hash.length) window.location = window.location; // Jump to hash href.
             if (nv.functions.callback) return nv.functions.callback()
-            else return !0
+            else return nv
         }
     ];
     window.nv = nv;
