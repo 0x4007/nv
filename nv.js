@@ -484,7 +484,7 @@ function nv(settings, callback) { // NV Theta
                         }, (1000 / 30));
                     },
                     framedata = activeMode;
-                framedata();
+                if (nv.spreads.measure) framedata();
             }
             return !0
         },
