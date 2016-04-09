@@ -273,7 +273,7 @@ function nv(settings, callback) { // NV Theta
                         this.injected = [];
                         var x = injectURLs.injected.length,
                             sectionSRC = document.createElement("SECTION");
-                            // injectURLs.injected = injectURLs.injected.reverse();
+                        // injectURLs.injected = injectURLs.injected.reverse();
                         while (x--) {
                             var section = sectionSRC.cloneNode(!1); // The most efficient way to recreate an element.
                             if (typeof injectURLs.injected[x] == "string") { // URL expected. This is the proper way to pass in injected spreads.
@@ -382,25 +382,29 @@ function nv(settings, callback) { // NV Theta
                             var scriptParses = spreadData.match(/<script(.|\n)+?<\/script>/ig), // Parses scripts, preserves line breaks.
                                 urls = [],
                                 codesIndicies = [];
-                            var x = scriptParses.length;
-                            while (x--) urls.push(scriptParses[x].match(/src=\".+?\"/ig))
+                            var x = scriptParses.length,
+                                scriptSourcesRegex = /src=\".+?\"/ig;
+                            while (x--) urls.push(scriptParses[x].match(scriptSourcesRegex))
                             x = urls.length;
-                            var z = x - 1; // Length offset to prepare for next loop.
+                            var z = x - 1, // Length offset to prepare for next loop.
+                                scriptUrlRegex = /['"]+/g; // Precompiled regex
                             while (x--) { // urls = [Array[1], null]
                                 if (urls[x]) { // Script has source, collect URL.
                                     var y = urls[x].length;
                                     while (y--) { // Remove src=, and all single/double quotes to expose only script URL
                                         if (urls[x][y]) {
                                             urls[x][y] = urls[x][y].replace("src=", "");
-                                            nv.spreads.scripts.urls.push(urls[x][y].replace(/['"]+/g, ''))
+                                            nv.spreads.scripts.urls.push(urls[x][y].replace(scriptUrlRegex, ''))
                                         }
                                     }
                                 } else codesIndicies.push(z - x) // Reverse index to loop again backwards.
                             }
                             x = codesIndicies.length;
+                            var openScriptRegex = /<scrip.+?>/,
+                                closeScriptRegex = /<\/scrip.+?>/;
                             while (x--) { // Non matches for "script src=".
-                                spreadData = scriptParses[codesIndicies[x]].replace(/<scrip.+?>/, "");
-                                spreadData = spreadData.replace(/<\/scrip.+?>/, "");
+                                spreadData = scriptParses[codesIndicies[x]].replace(openScriptRegex, "");
+                                spreadData = spreadData.replace(closeScriptRegex, "");
                                 if (spreadData.length) nv.spreads.scripts.codes.push(spreadData);
                             }
                         }
