@@ -99,9 +99,7 @@ function nv(settings, callback) { // NV Theta
                             }
                             var xhr = new XMLHttpRequest();
                             xhr.data = data;
-
                             if (xhr.responseURL === undefined) xhr.responseURL = target.indexOf('//') === -1 ? window.location.href.concat(target) : target // Polyfill, responseURL is not common
-
                             xhr.open("GET", target);
                             xhr.onloadend = function() {
                                 if (xhr.status == 200) onsuccess(xhr)
