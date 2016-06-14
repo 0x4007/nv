@@ -45,6 +45,9 @@ function nv(settings, callback) { // NV Theta
                                 if (URL.indexOf(".css") != -1) return "STYLE"
                                 return !1
                             };
+                            if (onfail == undefined) onfail = function() {
+                                throw new URIError("Failed to fetch from URL.")
+                            }
                             if (onsuccess == undefined) { // Assumes .JS or .CSS target.
                                 if (typeof target == "string") {
                                     onsuccess = function(xhr) {
@@ -55,7 +58,6 @@ function nv(settings, callback) { // NV Theta
                                         s.textContent = xhr.responseText.concat([("\n//# sourceURL="), xhr.responseURL].join(""));
                                         document.body.appendChild(s);
                                     };
-                                    if (onfail == undefined) onfail = function() {}
                                 }
                             }
                             if (Array.isArray(target)) {
@@ -103,9 +105,14 @@ function nv(settings, callback) { // NV Theta
                             xhr.open("GET", target);
                             xhr.onloadend = function() {
                                 if (xhr.status == 200) onsuccess(xhr)
-                                else if (xhr.status == 500) {
+                                else if (xhr.status >= 500 && xhr.status < 600) { // https://cloud.google.com/storage/docs/json_api/v1/how-tos/upload#exp-backoff
                                     console.warn("Server error, retrying request.");
-                                    nv.functions.get(xhr.responseURL, onsuccess, data, onfail, callback);
+                                    if (!nv.numbers.backoff) nv.numbers.backoff = .5
+                                    if (nv.numbers.backoff < 30) {
+                                        return setTimeout(function() {
+                                            nv.functions.get(xhr.responseURL, onsuccess, data, onfail, callback)
+                                        }, (Math.random() + (nv.numbers.backoff += nv.numbers.backoff)) * 1000)
+                                    } else onfail(xhr)
                                 } else onfail(xhr)
                             };
                             xhr.send();
