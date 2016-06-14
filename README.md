@@ -73,14 +73,7 @@ NV prefers to work with a DOM that includes the following, but will still work e
 </UI>
 </body>
 ```
-===
-######CSS:
-I always include this in the head of my HTML to allow the spreads to be 100% height and width of the screen. In theory this is not the only appropriate display style. You can still use this framework to asynchronously load in "modules" instead of calling them spreads. After all, they import their own javascript and styles. Additionally, they load in the order that you queue them in.
 
-```css
-#Spreads>*.Active{opacity:1}#Spreads>*:first-child{height:100%}#Spreads>*>*{text-align:center;display:table-cell;vertical-align:middle}#Spreads>*{display:table;height:100%;width:100%;transition:0.25s all ease-in-out;position:relative;opacity:0.125}#Spreads{height:100%;-webkit-overflow-scrolling:touch;font:400 16px/1.5 sans-serif}*{-webkit-text-size-adjust:none;-webkit-touch-callout:none;margin:0 auto;text-decoration:none;box-sizing:border-box;text-rendering:geometricPrecision}@viewport{width:device-width;zoom:1}a{color:inherit;font:inherit;pointer-events:auto}body,html,main{font:400 16px/1.5 sans-serif;color:#000;height:100%;width:100%;padding:0;margin:0}
-```
-===
 ######JS:
 
 The framework comes with three exposed functions. `"buildUI"`, `"scanUI"`, `"get"`. The first two will be unexposed at a later date, as I just realized that they are not particularly useful for the developer after the framework finishes setting up the navigation bar.
